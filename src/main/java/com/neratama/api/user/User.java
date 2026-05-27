@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(nullable = false, unique = true, length = 100)
     private String email;
@@ -40,7 +40,7 @@ public class User {
     public User() {}
 
 
-    public User(long id, String email, String password, String fullName, Role role, AuthProvider provider, String providerId, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public User(Long id, String email, String password, String fullName, Role role, AuthProvider provider, String providerId, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.email = email;
         this.password = password;
@@ -70,11 +70,11 @@ public class User {
         return new UserBuilder();
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -155,7 +155,7 @@ public class User {
 
         public UserBuilder() {}
 
-        public UserBuilder id(long id) {
+        public UserBuilder id(Long id) {
             this.id = id;
             return this;
         }
