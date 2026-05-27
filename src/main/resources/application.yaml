@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: neratama-api
+  profiles:
+    active: dev
+  jackson:
+    property-naming-strategy: SNAKE_CASE
