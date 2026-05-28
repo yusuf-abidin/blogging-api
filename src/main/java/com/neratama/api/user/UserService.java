@@ -1,8 +1,12 @@
 package com.neratama.api.user;
 
 import com.neratama.api.common.exception.BadRequestException;
+import com.neratama.api.security.jwt.JwtTokenProvider;
+import com.neratama.api.user.dto.AuthResponse;
+import com.neratama.api.user.dto.LoginRequest;
 import com.neratama.api.user.dto.RegisterRequest;
-import jakarta.transaction.Transactional;
+import com.neratama.api.user.dto.UserResponse;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -11,10 +15,12 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @Transactional
@@ -32,5 +38,28 @@ public class UserService {
                 .build();
 
         return userRepository.save(user);
+    }
+
+    @Transactional(readOnly = true)
+    public AuthResponse loginLocalUser(LoginRequest request) {
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new BadRequestException("Email atau password salah"));
+
+        if (user.getProvider() != AuthProvider.LOCAL) {
+            throw new BadRequestException("Akun ini terdaftar menggunakan Google. Silakan login menggunakan Google");
+        }
+
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new BadRequestException("Email atau password salah");
+        }
+
+        String accessToken = jwtTokenProvider.generateAccessToken(user);
+        String refreshToken = jwtTokenProvider.generateRefreshToken(user);
+
+        return AuthResponse.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .user(new UserResponse(user))
+                .build();
     }
 }

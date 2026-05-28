@@ -1,6 +1,8 @@
 package com.neratama.api.user;
 
 import com.neratama.api.common.response.ApiResponse;
+import com.neratama.api.user.dto.AuthResponse;
+import com.neratama.api.user.dto.LoginRequest;
 import com.neratama.api.user.dto.RegisterRequest;
 import com.neratama.api.user.dto.UserResponse;
 import jakarta.validation.Valid;
@@ -29,5 +31,13 @@ public class AuthController {
 
         ApiResponse<UserResponse> response = ApiResponse.success("Registrasi berhasil", userResponse);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<ApiResponse<AuthResponse>> loginUser(@Valid @RequestBody LoginRequest request) {
+        AuthResponse authResponse = userService.loginLocalUser(request);
+
+        ApiResponse<AuthResponse> response = ApiResponse.success("Login berhasil", authResponse);
+        return ResponseEntity.ok(response);
     }
 }
