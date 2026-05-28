@@ -15,5 +15,11 @@ spring:
     enabled: true
     baseline-on-migrate: true
 
+app:
+  jwt:
+    secret: "jkZC1dz35bKamDN5S7g2LoFZP5xMVjcouyOtfLSe4TK"
+    expiration-ms: 900000
+    refresh-expiration-ms: 604800000
+
 server:
   port: 8080
