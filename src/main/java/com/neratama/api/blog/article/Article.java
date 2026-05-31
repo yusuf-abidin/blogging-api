@@ -219,4 +219,89 @@ public class Article {
                 ", updatedAt=" + updatedAt +
                 '}';
     }
+
+    public static ArticleBuilder builder() {
+        return new ArticleBuilder();
+    }
+
+    public static class ArticleBuilder {
+        private Long id;
+        private String title;
+        private String slug;
+        private String content;
+        private String summary;
+        private String coverImage;
+        private ArticleStatus status;
+        private Long viewCount;
+        private User user;
+        private Set<Tag> tags = new HashSet<>();
+        private LocalDateTime createdAt;
+        private LocalDateTime updatedAt;
+
+        public ArticleBuilder() {}
+
+        public ArticleBuilder id(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public ArticleBuilder title(String title) {
+            this.title = title;
+            return this;
+        }
+
+        public ArticleBuilder slug(String slug) {
+            this.slug = slug;
+            return this;
+        }
+
+        public ArticleBuilder content(String content) {
+            this.content = content;
+            return this;
+        }
+
+        public ArticleBuilder summary(String summary) {
+            this.summary = summary;
+            return this;
+        }
+
+        public ArticleBuilder coverImage(String coverImage) {
+            this.coverImage = coverImage;
+            return this;
+        }
+
+        public ArticleBuilder status(ArticleStatus status) {
+            this.status = status;
+            return this;
+        }
+
+        public ArticleBuilder viewCount(Long viewCount) {
+            this.viewCount = viewCount;
+            return this;
+        }
+
+        public ArticleBuilder user(User user) {
+            this.user = user;
+            return this;
+        }
+
+        public ArticleBuilder tags(Set<Tag> tags) {
+            this.tags = tags;
+            return this;
+        }
+
+        public ArticleBuilder createdAt(LocalDateTime createdAt) {
+            this.createdAt = createdAt;
+            return this;
+        }
+
+        public ArticleBuilder updatedAt(LocalDateTime updatedAt) {
+            this.updatedAt = updatedAt;
+            return this;
+        }
+
+        public Article build() {
+            return new Article(this.id, this.title, this.slug, this.content, this.summary, this.coverImage, this.status, this.viewCount, this.user, this.tags, this.createdAt, this.updatedAt);
+        }
+    }
 }
