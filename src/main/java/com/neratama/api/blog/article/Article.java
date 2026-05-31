@@ -71,7 +71,7 @@ public class Article {
         this.status = status;
         this.viewCount = viewCount;
         this.user = user;
-        this.tags = tags;
+        this.tags = (tags != null) ? tags : new HashSet<>();
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
