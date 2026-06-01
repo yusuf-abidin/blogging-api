@@ -4,6 +4,7 @@ import com.neratama.api.common.response.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -89,8 +90,11 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<ApiResponse<Void>> handleAccessDeniedException(AccessDeniedException exception) {
+    @ExceptionHandler({
+        AccessDeniedException.class,
+        AuthorizationDeniedException.class
+    })
+    public ResponseEntity<ApiResponse<Void>> handleAccessDeniedException(Exception exception) {
         ApiResponse<Void> response = ApiResponse.<Void>builder()
                 .success(false)
                 .message("Akses ditolak: Anda tidak memiliki izin untuk mengakses sumber daya ini")
