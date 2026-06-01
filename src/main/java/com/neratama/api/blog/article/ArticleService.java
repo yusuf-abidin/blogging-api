@@ -5,12 +5,14 @@ import com.neratama.api.blog.article.dto.CreateArticleRequest;
 import com.neratama.api.blog.tag.Tag;
 import com.neratama.api.blog.tag.TagRepository;
 import com.neratama.api.common.exception.BadRequestException;
+import com.neratama.api.common.exception.ResourceNotFound;
 import com.neratama.api.user.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ArticleService {
@@ -51,5 +53,39 @@ public class ArticleService {
 
         Article savedArticle = articleRepository.save(article);
         return new ArticleResponse(savedArticle);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ArticleResponse> getAllPublishedArticles() {
+        return articleRepository.findAllByStatusOrderByCreatedAtDesc(ArticleStatus.PUBLISHED)
+                .stream()
+                .map(ArticleResponse::new)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public ArticleResponse getArticleBySlug(String slug) {
+        Article article = articleRepository.findBySlug(slug)
+                .orElseThrow(() -> new ResourceNotFound("Artikel dengan url tersebut tidak ditemukan"));
+
+        if (article.getStatus() != ArticleStatus.PUBLISHED) {
+            throw new BadRequestException("Artikel ini belum diterbitkan");
+        }
+
+        article.setViewCount(article.getViewCount() + 1);
+        Article updatedArticle = articleRepository.save(article);
+
+        return new ArticleResponse(updatedArticle);
+    }
+
+    @Transactional
+    public ArticleResponse updateArticleStatus(Long id, ArticleStatus status) {
+        Article article = articleRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFound("Artikel dengan ID:" + id + " tidak ditemukan"));
+
+        article.setStatus(status);
+        Article updatedArticle = articleRepository.save(article);
+
+        return new ArticleResponse(updatedArticle);
     }
 }

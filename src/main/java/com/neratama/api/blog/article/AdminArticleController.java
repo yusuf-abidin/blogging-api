@@ -9,10 +9,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/admin/articles")
@@ -31,5 +28,13 @@ public class AdminArticleController {
         ArticleResponse responseData = articleService.createDraftArticle(request, author);
 
         return new ResponseEntity<>(ApiResponse.success("Draft Artikel berhasil dibuat", responseData), HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{id}/status")
+    public ResponseEntity<ApiResponse<ArticleResponse>> updateArticleStatus(
+            @PathVariable Long id,
+            @RequestParam ArticleStatus status) {
+        ArticleResponse articleResponse = articleService.updateArticleStatus(id, status);
+        return ResponseEntity.ok(ApiResponse.success("Status artikel berhasil diperbarui", articleResponse));
     }
 }
