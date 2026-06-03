@@ -8,6 +8,7 @@ import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
@@ -102,5 +103,16 @@ public class GlobalExceptionHandler {
                 .build();
 
         return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<ApiResponse<Void>> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException exception) {
+        ApiResponse<Void> response = ApiResponse.<Void>builder()
+                .success(false)
+                .message("Ukuran file melebihi batas maksimum")
+                .timestamp(LocalDateTime.now())
+                .build();
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 }

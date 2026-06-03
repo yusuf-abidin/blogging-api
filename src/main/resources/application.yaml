@@ -5,3 +5,7 @@ spring:
     active: dev
   jackson:
     property-naming-strategy: SNAKE_CASE
+  servlet:
+   multipart:
+     max-file-size: 5MB
+     max-request-size: 10MB

@@ -52,6 +52,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/articles/**").permitAll()
                 .requestMatchers("/api/comments/article/**").permitAll()
                 .requestMatchers("/api/likes/article/**").permitAll()
+                .requestMatchers("/api/media/view/**").permitAll()
                 .requestMatchers("/api/tags/**").permitAll()
                 .anyRequest().authenticated()
             )
