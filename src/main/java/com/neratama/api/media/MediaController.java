@@ -38,20 +38,13 @@ public class MediaController {
 
     @GetMapping("/view/{filename:.+}")
     public ResponseEntity<Resource> viewFile(@PathVariable String filename) {
-        try{
-            Path filePath = Paths.get("uploads").toAbsolutePath().normalize().resolve(filename);
-            Resource resource = new UrlResource(filePath.toUri());
 
-            if (resource.exists()) {
-                return ResponseEntity.ok()
-                        .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
-                        .contentType(MediaType.IMAGE_PNG)
-                        .body(resource);
-            } else {
-                return ResponseEntity.notFound().build();
-            }
-        } catch (MalformedURLException e) {
-            return ResponseEntity.badRequest().build();
-        }
+        Resource resource = mediaService.loadFileAsResource(filename);
+        MediaType contentType = mediaService.detectContentType(filename);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
+                .contentType(contentType)
+                .body(resource);
     }
 }
