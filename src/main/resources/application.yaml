@@ -6,6 +6,9 @@ spring:
   jackson:
     property-naming-strategy: SNAKE_CASE
   servlet:
-   multipart:
-     max-file-size: 5MB
-     max-request-size: 10MB
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 10MB
+app:
+  upload:
+    dir: "uploads"
