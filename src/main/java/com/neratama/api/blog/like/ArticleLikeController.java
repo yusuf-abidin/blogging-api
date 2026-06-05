@@ -3,6 +3,7 @@ package com.neratama.api.blog.like;
 import com.neratama.api.common.response.ApiResponse;
 import com.neratama.api.security.UserPrincipal;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +17,7 @@ public class ArticleLikeController {
         this.articleLikeService = articleLikeService;
     }
 
+    @PreAuthorize("hasAuthority('VERIFIED')")
     @PostMapping("/article/{articleId}")
     public ResponseEntity<ApiResponse<String>> toggleArticleLike(
             @PathVariable Long articleId,

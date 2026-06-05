@@ -5,6 +5,7 @@ import com.neratama.api.common.response.ApiResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,6 +26,7 @@ public class TagController {
         return ResponseEntity.ok(ApiResponse.success("Berhasil mengambil data", tags));
     }
 
+    @PreAuthorize("hasRole('ADMIN') and hasAuthority('VERIFIED')")
     @PostMapping
     public ResponseEntity<ApiResponse<Tag>> createTag(@Valid @RequestBody
     TagRequest request) {
@@ -32,6 +34,7 @@ public class TagController {
         return new ResponseEntity<>(ApiResponse.success("Tag berhasil dibuat", createdTag),HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasRole('ADMIN') and hasAuthority('VERIFIED')")
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteTag(@PathVariable Long id) {
         tagService.deleteTag(id);
