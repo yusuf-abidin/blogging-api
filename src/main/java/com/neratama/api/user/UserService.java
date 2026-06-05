@@ -6,6 +6,7 @@ import com.neratama.api.user.dto.AuthResponse;
 import com.neratama.api.user.dto.LoginRequest;
 import com.neratama.api.user.dto.RegisterRequest;
 import com.neratama.api.user.dto.UserResponse;
+import com.neratama.api.verification.VerificationService;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,11 +17,13 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final VerificationService verificationService;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider, VerificationService verificationService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.verificationService = verificationService;
     }
 
     @Transactional
@@ -37,7 +40,10 @@ public class UserService {
                 .provider(AuthProvider.LOCAL)
                 .build();
 
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+        verificationService.sendVerificationOtp(savedUser);
+
+        return savedUser;
     }
 
     @Transactional(readOnly = true)

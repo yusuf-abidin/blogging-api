@@ -11,6 +11,9 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "is_verified", nullable = false)
+    private boolean isVerified = false;
+
     @Column(nullable = false, unique = true, length = 100)
     private String email;
 
@@ -59,6 +62,14 @@ public class User {
         this.updatedAt = now;
         if (this.role == null) this.role = Role.USER;
         if (this.provider == null) this.provider = AuthProvider.LOCAL;
+    }
+
+    public boolean isVerified() {
+        return isVerified;
+    }
+
+    public void setVerified(boolean verified) {
+        isVerified = verified;
     }
 
     @PreUpdate
