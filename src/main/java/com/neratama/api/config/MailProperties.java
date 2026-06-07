@@ -9,6 +9,7 @@ public class MailProperties {
 
     private String from;
     private int otpExpiryMinutes;
+    private int otpResendCooldownSeconds;
 
     public String getFrom() {
         return from;
@@ -24,5 +25,13 @@ public class MailProperties {
 
     public void setOtpExpiryMinutes(int otpExpiryMinutes) {
         this.otpExpiryMinutes = otpExpiryMinutes;
+    }
+
+    public int getOtpResendCooldownSeconds() {
+        return otpResendCooldownSeconds;
+    }
+
+    public void setOtpResendCooldownSeconds(int otpResendCooldownSeconds) {
+        this.otpResendCooldownSeconds = otpResendCooldownSeconds;
     }
 }

@@ -35,6 +35,7 @@ app:
   mail:
     from: noreply@neratama.id
     otp-expiry-minutes: 10
+    otp-resend-cooldown-seconds: 60
 
 server:
   port: 8080

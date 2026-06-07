@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 @Service
 public class OtpService {
@@ -25,6 +26,20 @@ public class OtpService {
 
     @Transactional
     public String generateAndSaveOtp(User user) {
+        emailVerificationRepository.findTopByUserIdOrderByCreatedAtDesc(user.getId())
+                        .ifPresent(lastOtp -> {
+                            long secondsSinceLastOtp = ChronoUnit.SECONDS.between(
+                                    lastOtp.getCreatedAt(),
+                                    LocalDateTime.now()
+                            );
+
+                            long cooldown = mailProperties.getOtpResendCooldownSeconds();
+
+                            if (secondsSinceLastOtp < cooldown) {
+                                long remaining = cooldown - secondsSinceLastOtp;
+                                throw new BadRequestException("Mohon tunggu " + remaining + " detik sebelum request OTP baru");
+                            }
+                        });
         emailVerificationRepository.invalidateAllByUserId(user.getId());
         String rawOtp = String.format("%06d", secureRandom.nextInt(999999));
         String hashedOtp = passwordEncoder.encode(rawOtp);

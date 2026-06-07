@@ -15,4 +15,6 @@ public interface EmailVerificationRepository extends JpaRepository<EmailVerifica
     @Modifying
     @Query("UPDATE EmailVerification ev SET ev.isUsed = true WHERE ev.user.id = :userId")
     void invalidateAllByUserId(Long userId);
+
+    Optional<EmailVerification> findTopByUserIdOrderByCreatedAtDesc(Long userId);
 }
