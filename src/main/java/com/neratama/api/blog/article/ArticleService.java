@@ -2,6 +2,7 @@ package com.neratama.api.blog.article;
 
 import com.neratama.api.blog.article.dto.ArticleResponse;
 import com.neratama.api.blog.article.dto.CreateArticleRequest;
+import com.neratama.api.blog.article.dto.UpdateArticleRequest;
 import com.neratama.api.blog.tag.Tag;
 import com.neratama.api.blog.tag.TagRepository;
 import com.neratama.api.common.exception.BadRequestException;
@@ -86,6 +87,26 @@ public class ArticleService {
         article.setStatus(status);
         Article updatedArticle = articleRepository.save(article);
 
+        return new ArticleResponse(updatedArticle);
+    }
+
+    @Transactional
+    public ArticleResponse updateArticle(Long id, UpdateArticleRequest request) {
+        Article article = articleRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFound("Artikel dengan ID:" + id + " tidak ditemukan"));
+
+        List<Tag> foundTags = tagRepository.findAllById(request.getTagIds());
+        if (foundTags.size() != request.getTagIds().size()) {
+            throw new BadRequestException("Salah satu / beberapa tag yang diberikan tidak ditemukan");
+        }
+
+        article.setTitle(request.getTitle());
+        article.setContent(request.getContent());
+        article.setSummary(request.getSummary());
+        article.setCoverImage(request.getCoverImage());
+        article.setTags(new HashSet<>(foundTags));
+
+        Article updatedArticle = articleRepository.save(article);
         return new ArticleResponse(updatedArticle);
     }
 }

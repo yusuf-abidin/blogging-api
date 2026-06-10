@@ -2,6 +2,7 @@ package com.neratama.api.blog.article;
 
 import com.neratama.api.blog.article.dto.ArticleResponse;
 import com.neratama.api.blog.article.dto.CreateArticleRequest;
+import com.neratama.api.blog.article.dto.UpdateArticleRequest;
 import com.neratama.api.common.response.ApiResponse;
 import com.neratama.api.security.UserPrincipal;
 import com.neratama.api.user.User;
@@ -38,5 +39,13 @@ public class AdminArticleController {
             @RequestParam ArticleStatus status) {
         ArticleResponse articleResponse = articleService.updateArticleStatus(id, status);
         return ResponseEntity.ok(ApiResponse.success("Status artikel berhasil diperbarui", articleResponse));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<ArticleResponse>> updateArticle(
+            @PathVariable Long id,
+            @Valid @RequestBody UpdateArticleRequest request) {
+        ArticleResponse articleResponse = articleService.updateArticle(id, request);
+        return ResponseEntity.ok(ApiResponse.success("Artikel berhasil diperbarui", articleResponse));
     }
 }
