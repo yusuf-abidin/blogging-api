@@ -46,4 +46,28 @@ public class EmailService {
             throw new RuntimeException("Gagal mengirim email OTP: " + e);
         }
     }
+
+    @Async
+    public void sendPasswordResetEmail(String toEmail, String fullName, String resetUrl) {
+        try {
+            Context context = new Context();
+            context.setVariable("fullName", fullName);
+            context.setVariable("resetUrl", resetUrl);
+            context.setVariable("expiryMinutes", mailProperties.getPasswordResetExpiryMinutes());
+
+            String htmlContent = templateEngine.process("email/password-reset.html", context);
+
+            MimeMessage message = mailsender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setFrom(mailProperties.getFrom());
+            helper.setTo(toEmail);
+            helper.setSubject("Reset Password - Neratama");
+            helper.setText(htmlContent, true);
+
+            mailsender.send(message);
+        } catch (MessagingException e) {
+            throw new RuntimeException("Gagal mengirim email Password Reset: " + e);
+        }
+    }
 }
