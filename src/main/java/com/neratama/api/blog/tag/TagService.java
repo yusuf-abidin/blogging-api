@@ -42,4 +42,23 @@ public class TagService {
 
         tagRepository.delete(tag);
     }
+
+    @Transactional
+    public Tag updateTag(Long id, TagRequest request) {
+        Tag tag = tagRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFound("Tag dengan ID: " + id + " tidak ditemukan"));
+
+        if (!tag.getName().equalsIgnoreCase(request.getName()) && tagRepository.existsByName(request.getName())) {
+            throw new BadRequestException("Tag dengan nama " + request.getName() + " sudah ada");
+        }
+
+        String newSlug = request.getName().toLowerCase().trim()
+                .replaceAll("[^a-z0-9\\s]", "")
+                .replaceAll("\\s+", "-");
+
+        tag.setName(request.getName());
+        tag.setSlug(newSlug);
+
+        return tagRepository.save(tag);
+    }
 }

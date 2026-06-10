@@ -42,4 +42,14 @@ public class TagController {
         return ResponseEntity.ok(ApiResponse.success("Tag berhasil dihapus", null));
     }
 
+    @PreAuthorize("hasRole('ADMIN') and hasAuthority('VERIFIED')")
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<Tag>> updateTag(
+            @PathVariable Long id,
+            @Valid @RequestBody TagRequest request) {
+        Tag updatedTag = tagService.updateTag(id, request);
+
+        return ResponseEntity.ok(ApiResponse.success("Tag berhasil diperbarui", updatedTag));
+    }
+
 }
