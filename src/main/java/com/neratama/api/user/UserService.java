@@ -2,10 +2,7 @@ package com.neratama.api.user;
 
 import com.neratama.api.common.exception.BadRequestException;
 import com.neratama.api.security.jwt.JwtTokenProvider;
-import com.neratama.api.user.dto.AuthResponse;
-import com.neratama.api.user.dto.LoginRequest;
-import com.neratama.api.user.dto.RegisterRequest;
-import com.neratama.api.user.dto.UserResponse;
+import com.neratama.api.user.dto.*;
 import com.neratama.api.verification.VerificationService;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -67,5 +64,34 @@ public class UserService {
                 .refreshToken(refreshToken)
                 .user(new UserResponse(user))
                 .build();
+    }
+
+    @Transactional
+    public UserResponse updateProfile(User user, UpdateProfileRequest request) {
+        User freshUser = userRepository.findById(user.getId())
+                        .orElseThrow(() -> new BadRequestException("Pengguna tidak ditemukan"));
+        freshUser.setFullName(request.getFullName());
+        User updatedUser = userRepository.save(freshUser);
+        return new UserResponse((updatedUser));
+    }
+
+    @Transactional
+    public void changePassword(User user, ChangePasswordRequest request) {
+        User freshUser = userRepository.findById(user.getId())
+                .orElseThrow(() -> new BadRequestException("Pengguna tidak ditemukan"));
+        if (freshUser.getProvider() != AuthProvider.LOCAL) {
+            throw new BadRequestException("Akun ini terdaftar menggunakan Google. Tidak dapat mengubah password");
+        }
+
+        if (!passwordEncoder.matches(request.getOldPassword(), freshUser.getPassword())) {
+            throw new BadRequestException("Password lama salah");
+        }
+
+        if (request.getOldPassword().equals(request.getNewPassword())) {
+            throw new BadRequestException("Password baru tidak boleh sama dengan password lama");
+        }
+
+        freshUser.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(freshUser);
     }
 }
