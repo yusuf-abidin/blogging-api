@@ -11,6 +11,7 @@ import com.neratama.api.user.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -85,6 +86,9 @@ public class ArticleService {
                 .orElseThrow(() -> new ResourceNotFound("Artikel dengan ID:" + id + " tidak ditemukan"));
 
         article.setStatus(status);
+        if (status == ArticleStatus.PUBLISHED && article.getPublishedAt() == null) {
+            article.setPublishedAt(LocalDateTime.now());
+        }
         Article updatedArticle = articleRepository.save(article);
 
         return new ArticleResponse(updatedArticle);

@@ -17,6 +17,7 @@ public class ArticleResponse {
     private String coverImage;
     private String status;
     private Long viewCount;
+    private LocalDateTime publishedAt;
     private String authorName;
     private Set<String> tags;
     private LocalDateTime createdAt;
@@ -29,6 +30,7 @@ public class ArticleResponse {
         this.summary = article.getSummary();
         this.coverImage = article.getCoverImage();
         this.status = article.getStatus().name();
+        this.publishedAt = article.getPublishedAt();
         this.viewCount = article.getViewCount();
         this.authorName = article.getUser().getFullName();
         this.tags = article.getTags().stream().map(Tag::getName).collect(Collectors.toSet());
@@ -97,6 +99,14 @@ public class ArticleResponse {
 
     public void setViewCount(Long viewCount) {
         this.viewCount = viewCount;
+    }
+
+    public LocalDateTime getPublishedAt() {
+        return publishedAt;
+    }
+
+    public void setPublishedAt(LocalDateTime publishedAt) {
+        this.publishedAt = publishedAt;
     }
 
     public String getAuthorName() {

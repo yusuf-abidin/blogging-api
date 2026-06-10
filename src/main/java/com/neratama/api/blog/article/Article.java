@@ -39,6 +39,9 @@ public class Article {
     @Column(name = "view_count", nullable = false)
     private Long viewCount;
 
+    @Column(name = "published_at")
+    private LocalDateTime publishedAt;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -61,7 +64,7 @@ public class Article {
     public Article() {
     }
 
-    public Article(Long id, String title, String slug, String content, String summary, String coverImage, ArticleStatus status, Long viewCount, User user, Set<Tag> tags, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public Article(Long id, String title, String slug, String content, String summary, String coverImage, ArticleStatus status, Long viewCount, LocalDateTime publishedAt, User user, Set<Tag> tags, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.title = title;
         this.slug = slug;
@@ -70,6 +73,7 @@ public class Article {
         this.coverImage = coverImage;
         this.status = status;
         this.viewCount = viewCount;
+        this.publishedAt = publishedAt;
         this.user = user;
         this.tags = (tags != null) ? tags : new HashSet<>();
         this.createdAt = createdAt;
@@ -160,6 +164,14 @@ public class Article {
         this.viewCount = viewCount;
     }
 
+    public LocalDateTime getPublishedAt() {
+        return publishedAt;
+    }
+
+    public void setPublishedAt(LocalDateTime publishedAt) {
+        this.publishedAt = publishedAt;
+    }
+
     public User getUser() {
         return user;
     }
@@ -233,6 +245,7 @@ public class Article {
         private String coverImage;
         private ArticleStatus status;
         private Long viewCount;
+        private LocalDateTime publishedAt;
         private User user;
         private Set<Tag> tags = new HashSet<>();
         private LocalDateTime createdAt;
@@ -280,6 +293,11 @@ public class Article {
             return this;
         }
 
+        public ArticleBuilder publishedAt(LocalDateTime publishedAt) {
+            this.publishedAt = publishedAt;
+            return this;
+        }
+
         public ArticleBuilder user(User user) {
             this.user = user;
             return this;
@@ -301,7 +319,7 @@ public class Article {
         }
 
         public Article build() {
-            return new Article(this.id, this.title, this.slug, this.content, this.summary, this.coverImage, this.status, this.viewCount, this.user, this.tags, this.createdAt, this.updatedAt);
+            return new Article(this.id, this.title, this.slug, this.content, this.summary, this.coverImage, this.status, this.viewCount, this.publishedAt, this.user, this.tags, this.createdAt, this.updatedAt);
         }
     }
 }
