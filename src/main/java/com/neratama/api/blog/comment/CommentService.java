@@ -4,7 +4,9 @@ import com.neratama.api.blog.article.Article;
 import com.neratama.api.blog.article.ArticleRepository;
 import com.neratama.api.blog.comment.dto.CommentResponse;
 import com.neratama.api.blog.comment.dto.CreateCommentRequest;
+import com.neratama.api.blog.comment.dto.UpdateCommentRequest;
 import com.neratama.api.common.exception.ResourceNotFound;
+import com.neratama.api.common.exception.UnauthorizedException;
 import com.neratama.api.user.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,5 +53,19 @@ public class CommentService {
                 .stream()
                 .map(CommentResponse::new)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public CommentResponse updateComment(Long commentId, UpdateCommentRequest request, User currentUser) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new ResourceNotFound("Komentar dengan ID: " + commentId + " tidak ditemukan"));
+
+        if (!comment.getUser().getId().equals(currentUser.getId())) {
+            throw new UnauthorizedException("Anda tidak memiliki izin untuk mengedit komentar ini");
+        }
+
+        comment.setContent(request.getContent());
+        Comment updatedComment = commentRepository.save(comment);
+        return new CommentResponse(updatedComment);
     }
 }

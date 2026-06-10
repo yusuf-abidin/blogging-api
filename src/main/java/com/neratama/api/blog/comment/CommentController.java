@@ -2,6 +2,7 @@ package com.neratama.api.blog.comment;
 
 import com.neratama.api.blog.comment.dto.CommentResponse;
 import com.neratama.api.blog.comment.dto.CreateCommentRequest;
+import com.neratama.api.blog.comment.dto.UpdateCommentRequest;
 import com.neratama.api.common.response.ApiResponse;
 import com.neratama.api.security.UserPrincipal;
 import jakarta.validation.Valid;
@@ -37,5 +38,16 @@ public class CommentController {
     public ResponseEntity<ApiResponse<List<CommentResponse>>> getArticleComments(@PathVariable Long articleId) {
         List<CommentResponse> comments = commentService.getCommentsByArticle(articleId);
         return ResponseEntity.ok(ApiResponse.success("Berhasil mengambil data komentar", comments));
+    }
+
+    @PreAuthorize("hasAuthority('VERIFIED')")
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<CommentResponse>> updateComment(
+            @PathVariable Long id,
+            @Valid @RequestBody UpdateCommentRequest request,
+            @AuthenticationPrincipal UserPrincipal userPrincipal) {
+        CommentResponse response = commentService.updateComment(id, request, userPrincipal.getUser());
+
+        return ResponseEntity.ok(ApiResponse.success("Komentar berhasil diperbarui", response));
     }
 }
