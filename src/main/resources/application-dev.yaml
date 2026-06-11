@@ -32,6 +32,9 @@ app:
     expiration-ms: 900000
     refresh-expiration-ms: 604800000
 
+  cors:
+    allowed-origins: "http://localhost:3000"
+
   mail:
     from: noreply@neratama.id
     otp-expiry-minutes: 10
