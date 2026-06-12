@@ -7,13 +7,14 @@ public class UserResponse {
     private String email;
     private String fullName;
     private String role;
-
+    private boolean isVerified;
 
     public UserResponse(User user) {
         this.id = user.getId();
         this.email = user.getEmail();
         this.fullName = user.getFullName();
         this.role = user.getRole().name();
+        this.isVerified = user.isVerified();
     }
 
     public Long getId() {
@@ -46,5 +47,13 @@ public class UserResponse {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public boolean isVerified() {
+        return isVerified;
+    }
+
+    public void setVerified(boolean verified) {
+        isVerified = verified;
     }
 }
