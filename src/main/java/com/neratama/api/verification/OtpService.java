@@ -56,7 +56,7 @@ public class OtpService {
     @Transactional
     public void verifyOtp(User user, String rawOtp) {
         EmailVerification verification = emailVerificationRepository.findTopByUserIdAndIsUsedFalseOrderByCreatedAtDesc(user.getId())
-                .orElseThrow(() -> new BadRequestException("OTP tidak ditemukan"));
+                .orElseThrow(() -> new BadRequestException("OTP tidak valid"));
 
         if (verification.isExpired()) {
             throw new BadRequestException("OTP telah kedaluwarsa");

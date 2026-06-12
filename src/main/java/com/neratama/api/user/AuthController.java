@@ -1,10 +1,7 @@
 package com.neratama.api.user;
 
 import com.neratama.api.common.response.ApiResponse;
-import com.neratama.api.user.dto.AuthResponse;
-import com.neratama.api.user.dto.LoginRequest;
-import com.neratama.api.user.dto.RegisterRequest;
-import com.neratama.api.user.dto.UserResponse;
+import com.neratama.api.user.dto.*;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,5 +36,12 @@ public class AuthController {
 
         ApiResponse<AuthResponse> response = ApiResponse.success("Login berhasil", authResponse);
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/refresh-token")
+    public ResponseEntity<ApiResponse<AuthResponse>> refreshToken(
+            @Valid @RequestBody RefreshTokenRequest request) {
+        AuthResponse response = userService.refreshAccessToken(request.getRefreshToken());
+        return ResponseEntity.ok(ApiResponse.success("Token berhasil diperbarui", response));
     }
 }

@@ -34,18 +34,6 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public String generateRefreshToken(User user) {
-        Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + jwtProperties.getRefreshExpirationMs());
-
-        return Jwts.builder()
-                .subject(user.getEmail())
-                .issuedAt(now)
-                .expiration(expiryDate)
-                .signWith(jwtSecretKey)
-                .compact();
-    }
-
     public String getEmailFromToken(String token) {
         Claims claims = Jwts.parser()
                 .verifyWith(jwtSecretKey)

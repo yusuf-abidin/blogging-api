@@ -60,7 +60,8 @@ public class SecurityConfig {
                         "/api/auth/login",
                         "/api/auth/register",
                         "/api/auth/forgot-password",
-                        "/api/auth/reset-password"
+                        "/api/auth/reset-password",
+                        "/api/auth/refresh-token"
                 ).permitAll()
                 .requestMatchers("/api/articles/**").permitAll()
                 .requestMatchers("/api/comments/article/**").permitAll()

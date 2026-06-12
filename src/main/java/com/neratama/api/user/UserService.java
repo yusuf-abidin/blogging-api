@@ -1,5 +1,6 @@
 package com.neratama.api.user;
 
+import com.neratama.api.auth.token.RefreshTokenService;
 import com.neratama.api.common.exception.BadRequestException;
 import com.neratama.api.security.jwt.JwtTokenProvider;
 import com.neratama.api.user.dto.*;
@@ -15,12 +16,14 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final VerificationService verificationService;
+    private final RefreshTokenService refreshTokenService;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider, VerificationService verificationService) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider, VerificationService verificationService, RefreshTokenService refreshTokenService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenProvider = jwtTokenProvider;
         this.verificationService = verificationService;
+        this.refreshTokenService = refreshTokenService;
     }
 
     @Transactional
@@ -43,7 +46,7 @@ public class UserService {
         return savedUser;
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public AuthResponse loginLocalUser(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new BadRequestException("Email atau password salah"));
@@ -57,7 +60,7 @@ public class UserService {
         }
 
         String accessToken = jwtTokenProvider.generateAccessToken(user);
-        String refreshToken = jwtTokenProvider.generateRefreshToken(user);
+        String refreshToken = refreshTokenService.generateAndSaveToken(user);
 
         return AuthResponse.builder()
                 .accessToken(accessToken)
@@ -93,5 +96,19 @@ public class UserService {
 
         freshUser.setPassword(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(freshUser);
+    }
+
+    @Transactional
+    public AuthResponse refreshAccessToken(String refreshToken) {
+        User user = refreshTokenService.validateAndConsumeToken(refreshToken);
+
+        String newAccessToken = jwtTokenProvider.generateAccessToken(user);
+        String newRefreshToken = refreshTokenService.generateAndSaveToken(user);
+
+        return AuthResponse.builder()
+                .accessToken(newAccessToken)
+                .refreshToken(newRefreshToken)
+                .user(new UserResponse(user))
+                .build();
     }
 }
